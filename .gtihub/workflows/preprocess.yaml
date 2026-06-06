@@ -1,0 +1,39 @@
+name: Preprocess Dataset
+
+on:
+  push:
+    paths:
+      - 'healthcare_stroke_raw.csv'
+      - 'preprocessing/automate_Aisya-Alia.py'
+  workflow_dispatch:
+
+jobs:
+  preprocess:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install pandas numpy scikit-learn matplotlib seaborn
+
+      - name: Run preprocessing script
+        run: python preprocessing/automate_Aisya-Alia.py
+
+      - name: Verify output file
+        run: |
+          echo "Files in preprocessing folder:"
+          ls -la preprocessing/
+
+      - name: Commit and push updated dataset
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Automated preprocessing - update stroke_preprocessed"
+          file_pattern: 'preprocessing/stroke_preprocessed.csv'
